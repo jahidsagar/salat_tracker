@@ -4,6 +4,8 @@ import 'package:salat_tracker/pages/components/custom_bottom_navigation_bar.dart
 import 'package:salat_tracker/pages/components/salat_name_with_icon_and_button.dart';
 import 'package:salat_tracker/pages/components/show_day_and_date.dart';
 import 'package:salat_tracker/providers/date_provider.dart';
+import 'package:salat_tracker/providers/salat_model_provider.dart';
+import 'package:salat_tracker/utils/date_utils.dart';
 
 // Source to make Bottom navigation bar: https://blog.logrocket.com/how-to-build-a-bottom-navigation-bar-in-flutter/
 
@@ -28,12 +30,14 @@ class _LandingPageState extends State<LandingPage> {
       setState(() {
         _selectedDate = picked;
         context.read<DateProvider>().getCustomHijriDate(picked);
+        context.read<SalatModelProvider>().getSingleSalat(DateToString(picked));
       });
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    
     return Scaffold(
       body: SafeArea(
         child: SingleChildScrollView(
@@ -46,25 +50,30 @@ class _LandingPageState extends State<LandingPage> {
               ),
               Container(
                 padding: EdgeInsets.all(20),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.only(top: 15.0, bottom: 15.0),
-                      child: Text(
-                        "Prayer",
-                        style: TextStyle(
-                          fontSize: 15,
+                child: Consumer<SalatModelProvider>(
+                  builder: (context, provider, child) {
+                    final salat = provider.salatInstance;
+                    return Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.only(top: 15.0, bottom: 15.0),
+                          child: Text(
+                            "Prayer",
+                            style: TextStyle(
+                              fontSize: 15,
+                            ),
+                          ),
                         ),
-                      ),
-                    ),
-                    SalatNameWithIconAndButton(
-                        Icons.dark_mode_outlined, "Fazr"),
-                    SalatNameWithIconAndButton(Icons.sunny, "Duhr"),
-                    SalatNameWithIconAndButton(Icons.cloud_queue, "Asr"),
-                    SalatNameWithIconAndButton(Icons.sunny_snowing, "Magrib"),
-                    SalatNameWithIconAndButton(Icons.night_shelter, "Esha"),
-                  ],
+                        SalatNameWithIconAndButton(
+                            Icons.dark_mode_outlined, "Fazr", salat?.fazr),
+                        SalatNameWithIconAndButton(Icons.sunny, "Duhr", salat?.duhr),
+                        SalatNameWithIconAndButton(Icons.cloud_queue, "Asr", salat?.asr),
+                        SalatNameWithIconAndButton(Icons.sunny_snowing, "Magrib", salat?.magrib),
+                        SalatNameWithIconAndButton(Icons.night_shelter, "Esha", salat?.esha),
+                      ],
+                    );
+                  },
                 ),
               ),
             ],

@@ -1,23 +1,37 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:salat_tracker/models/salat_model.dart';
 import 'package:salat_tracker/providers/date_provider.dart';
+import 'package:salat_tracker/providers/salat_model_provider.dart';
+import 'package:salat_tracker/utils/date_utils.dart';
 
-class SalatNameWithIconAndButton extends StatelessWidget {
+class SalatNameWithIconAndButton extends StatefulWidget {
   IconData icon;
   String salatName;
+  int? salatValue;
 
-  SalatNameWithIconAndButton(this.icon, this.salatName);
+  SalatNameWithIconAndButton(this.icon, this.salatName, this.salatValue);
 
+  @override
+  State<SalatNameWithIconAndButton> createState() =>
+      _SalatNameWithIconAndButtonState();
+}
+
+class _SalatNameWithIconAndButtonState
+    extends State<SalatNameWithIconAndButton> {
   void _showMyDialog(BuildContext context) {
+    final date = DateToString(context.read<DateProvider>().pickedDate);
+    final salatProvider = context.read<SalatModelProvider>().salatInstance;
+
     showDialog(
       context: context,
-      builder: (BuildContext context) {
+      builder: (context) {
         return AlertDialog(
           title: Center(
               child: Column(
             children: [
-              Icon(this.icon),
-              Text(this.salatName),
+              Icon(this.widget.icon),
+              Text(this.widget.salatName),
               Text(
                 context.read<DateProvider>().gregorianDate,
                 style: TextStyle(fontSize: 10),
@@ -42,7 +56,18 @@ class SalatNameWithIconAndButton extends StatelessWidget {
                 ],
               ),
               onPressed: () {
-                // Navigator.of(context).pop(); // Dismiss the dialog
+                SalatModel salat = new SalatModel.fromString(
+                    salat: salatProvider!,
+                    //context.read<SalatModelProvider>().salatModel ?? SalatModel(date: date),
+                    salatName: this.widget.salatName,
+                    value: 0);
+
+                context
+                    .read<SalatModelProvider>()
+                    .insertOrUpdate(salat)
+                    .then((_) {
+                  Navigator.of(context).pop();
+                }).catchError((err) {});
               },
             ),
             TextButton(
@@ -58,7 +83,17 @@ class SalatNameWithIconAndButton extends StatelessWidget {
                 ],
               ),
               onPressed: () {
-                // Navigator.of(context).pop(); // Dismiss the dialog
+                SalatModel salat = new SalatModel.fromString(
+                    salat: salatProvider!,
+                    salatName: this.widget.salatName,
+                    value: 1);
+
+                context
+                    .read<SalatModelProvider>()
+                    .insertOrUpdate(salat)
+                    .then((_) {
+                  Navigator.of(context).pop();
+                }).catchError((err) {});
               },
             ),
             TextButton(
@@ -74,7 +109,17 @@ class SalatNameWithIconAndButton extends StatelessWidget {
                 ],
               ),
               onPressed: () {
-                // Navigator.of(context).pop(); // Dismiss the dialog
+                SalatModel salat = new SalatModel.fromString(
+                    salat: salatProvider!,
+                    salatName: this.widget.salatName,
+                    value: 2);
+
+                context
+                    .read<SalatModelProvider>()
+                    .insertOrUpdate(salat)
+                    .then((_) {
+                  Navigator.of(context).pop();
+                }).catchError((err) {});
               },
             ),
             TextButton(
@@ -90,7 +135,19 @@ class SalatNameWithIconAndButton extends StatelessWidget {
                 ],
               ),
               onPressed: () {
-                // Navigator.of(context).pop(); // Dismiss the dialog
+                SalatModel salat = new SalatModel.fromString(
+                    salat: salatProvider!,
+                    salatName: this.widget.salatName,
+                    value: 3);
+
+                context
+                    .read<SalatModelProvider>()
+                    .insertOrUpdate(salat)
+                    .then((_) {
+                  context.read<SalatModelProvider>().getSingleSalat(
+                      DateToString(context.read<DateProvider>().pickedDate));
+                  Navigator.of(context).pop();
+                }).catchError((err) {});
               },
             ),
           ],
@@ -116,12 +173,12 @@ class SalatNameWithIconAndButton extends StatelessWidget {
                   Padding(
                     padding: const EdgeInsets.only(left: 20, right: 20),
                     child: Icon(
-                      this.icon,
+                      this.widget.icon,
                       size: 35,
                     ),
                   ),
                   Text(
-                    this.salatName,
+                    this.widget.salatName,
                     style: TextStyle(fontSize: 25),
                   ),
                 ],
@@ -141,7 +198,15 @@ class SalatNameWithIconAndButton extends StatelessWidget {
                 onPressed: () {
                   _showMyDialog(context);
                 },
-                child: Container(),
+                child: this.widget.salatValue == 0
+                    ? Icon(Icons.block)
+                    : this.widget.salatValue == 1
+                        ? Icon(Icons.add_alert_outlined)
+                        : this.widget.salatValue == 2
+                            ? Icon(Icons.person_outline)
+                            : this.widget.salatValue == 3
+                                ? Icon(Icons.people_outline)
+                                : Container(),
               ),
             )
           ],

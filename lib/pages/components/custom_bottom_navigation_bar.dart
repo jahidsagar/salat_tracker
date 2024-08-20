@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:salat_tracker/landing_page.dart';
+import 'package:salat_tracker/pages/salat_not_prayed.dart';
+import 'package:salat_tracker/providers/bottom_navigator_provider.dart';
 
 class CustomBottomNavigationBar extends StatefulWidget {
   const CustomBottomNavigationBar({super.key});
@@ -18,9 +22,25 @@ class _CustomBottomNavigationBarState extends State<CustomBottomNavigationBar> {
   }
 
   Widget _buildBottomNavItem(IconData icon, String label, int index) {
-    bool isSelected = _selectedIndex == index;
+    bool isSelected = context.read<BottomNavigatorProvider>().selected == index;
+
     return GestureDetector(
-      onTap: () => _onItemTapped(index),
+      onTap: () {
+        if (isSelected) return;
+
+        context.read<BottomNavigatorProvider>().setSelected(index);
+        if (index == 0) {
+          Navigator.pushAndRemoveUntil(
+            context,
+            MaterialPageRoute(builder: (context) => LandingPage()),
+            (Route<dynamic> route) => false,
+          );
+        }
+        if (index == 1) {
+          Navigator.push(context,
+              MaterialPageRoute(builder: (context) => SalatNotPrayed()));
+        }
+      },
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
         decoration: isSelected

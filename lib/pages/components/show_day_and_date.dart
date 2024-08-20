@@ -4,6 +4,9 @@ import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:salat_tracker/providers/date_provider.dart';
 
+import '../../providers/salat_model_provider.dart';
+import '../../utils/date_utils.dart';
+
 class ShowDayAndDate extends StatefulWidget {
   const ShowDayAndDate({super.key});
 
@@ -22,6 +25,7 @@ class _ShowDayAndDateState extends State<ShowDayAndDate> {
   @override
   Widget build(BuildContext context) {
     final dateProviderClass = Provider.of<DateProvider>(context);
+    context.read<SalatModelProvider>().getSingleSalat(DateToString(dateProviderClass.pickedDate));
 
     return Container(
       padding: EdgeInsets.all(20),

@@ -2,13 +2,17 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'package:salat_tracker/landing_page.dart';
+import 'package:salat_tracker/providers/bottom_navigator_provider.dart';
 import 'package:salat_tracker/providers/date_provider.dart';
+import 'package:salat_tracker/providers/salat_model_provider.dart';
 
 void main() {
   runApp(
     MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (context) => DateProvider()),
+        ChangeNotifierProvider(create: (context) => SalatModelProvider()),
+        ChangeNotifierProvider(create: (context) => BottomNavigatorProvider()),
       ],
       child: const MyApp(),
     ),
